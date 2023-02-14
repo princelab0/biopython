@@ -1,5 +1,5 @@
 import sys
-from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QPushButton, QFileDialog
+from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QFileDialog
 from PySide2.QtWebEngineWidgets import QWebEngineView
 
 import py3Dmol
@@ -50,6 +50,7 @@ class Visualizer(QWidget):
     def __init__(self):
         super().__init__()
         self.container = QHBoxLayout()
+        self.buttonsContainer = QVBoxLayout()
 
 
         self.pdbVisualizer = PDBVisualizer(500, 500, "")
@@ -60,8 +61,12 @@ class Visualizer(QWidget):
         self.showButton.clicked.connect(self.pdbVisualizer.showFile)
 
         self.container.addWidget(self.pdbVisualizer)
-        self.container.addWidget(self.selectButton)
-        self.container.addWidget(self.showButton)
+
+        self.buttonsContainer.addWidget(self.selectButton)
+        self.buttonsContainer.addWidget(self.showButton)
+        self.buttonsContainer.addStretch(1)
+
+        self.container.addLayout(self.buttonsContainer)
 
         self.setLayout(self.container)
 
