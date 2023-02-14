@@ -10,30 +10,23 @@ class PDBVisualizer(QWebEngineView):
 
         self.width = width
         self.height = height
-        self.setGeometry(100, 100, self.width+20, self.height+20)
+        self.setFixedSize(self.width+20, self.height+20)
 
         self.pdbPath = pdbPath
         self.fileName = ""
 
         self.system = None
 
-        self.view = None
-        self.setupView()
-
-
-
+        self.view = py3Dmol.view(width=self.width, height=self.height)
 
     def setupView(self):
         self.parseSystem()
-        self.view = py3Dmol.view(width=self.width, height=self.height)
         self.view.addModelsAsFrames(self.system)
         self.view.setStyle({'model': -1}, {"cartoon": {'color': 'spectrum'}})
         self.view.zoomTo()
         # from py3Dmol.view.show
         self.view.updatejs = ''
         self.setHtml(self.view._make_html())
-
-
 
     def parseSystem(self):
         with open(self.pdbPath) as ifile:
@@ -52,13 +45,14 @@ class PDBVisualizer(QWebEngineView):
         self.setupView()
 
 
+
 class Visualizer(QWidget):
     def __init__(self):
         super().__init__()
         self.container = QHBoxLayout()
 
 
-        self.pdbVisualizer = PDBVisualizer(500, 500, "structure.pdb")
+        self.pdbVisualizer = PDBVisualizer(500, 500, "")
         self.selectButton = QPushButton(text="Select")
         self.showButton   = QPushButton(text="Show")
 
