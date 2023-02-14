@@ -21,6 +21,7 @@ class PDBVisualizer(QWebEngineView):
 
     def setupView(self):
         self.parseSystem()
+        self.view.clear()   # clear cache
         self.view.addModelsAsFrames(self.system)
         self.view.setStyle({'model': -1}, {"cartoon": {'color': 'spectrum'}})
         self.view.zoomTo()
