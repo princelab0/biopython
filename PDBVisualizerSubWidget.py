@@ -1,4 +1,3 @@
-from PySide2.QtWidgets import QFileDialog
 from PySide2.QtWebEngineWidgets import QWebEngineView
 
 import py3Dmol
@@ -36,14 +35,9 @@ class PDBVisualizer(QWebEngineView):
         with open(self.pdbPath) as ifile:
             self.system = "".join([x for x in ifile])
 
-    def changeFile(self):
-        self.fileName = QFileDialog.getOpenFileName()[0]
-
     def showFile(self):
         if not self.fileName: return
-        print(self.fileName, self.pdbPath)
         self.pdbPath = self.fileName
-        print(self.fileName, self.pdbPath)
 
         self.setupView()
 

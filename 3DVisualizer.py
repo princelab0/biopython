@@ -1,6 +1,8 @@
 import sys
 from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLineEdit, QComboBox
 from PDBVisualizerSubWidget import PDBVisualizer
+from PySide2.QtWidgets import QFileDialog
+
 
 import pypdb.clients.pdb.pdb_client
 
@@ -26,7 +28,7 @@ class Visualizer(QWidget):
         # self.comboBox.activated.connect(self.downloadPDB)
         self.searchBar.returnPressed.connect(self.updateComboBox)
         self.searchBar.returnPressed.connect(self.comboBox.showPopup)
-        self.selectButton.clicked.connect(self.pdbVisualizer.changeFile)
+        self.selectButton.clicked.connect(self.changeFile)
         self.downloadButton.clicked.connect(lambda: self.downloadPDB())
         self.showButton.clicked.connect(self.pdbVisualizer.showFile)
         # --------------------------------------------------------------------#
@@ -62,6 +64,7 @@ class Visualizer(QWidget):
 
         self.comboBox.show()
 
+
     def downloadPDB(self, name="temp"):
         pdb_id = self.comboBox.currentText()
         try:
@@ -72,13 +75,22 @@ class Visualizer(QWidget):
         with open(name+".pdb", "w") as f:
             f.write(pdb_file)
 
-        self.fileName = name+".pdb"
+        self.pdbVisualizer.fileName = name+".pdb"
+        self.selectedButtonText(pdb_id)
         
             
     def getSearchList(self, query, max_length=10):
         temp = pypdb.Query(query).search()
         if len(temp) >= 10: return temp[:max_length]
         return temp
+    
+    def selectedButtonText(self, name):
+        if not name: return
+        self.selectButton.setText(name)
+    
+    def changeFile(self):
+        self.pdbVisualizer.fileName = QFileDialog.getOpenFileName()[0]
+        self.selectedButtonText(self.pdbVisualizer.fileName.split(".")[0].split('/')[-1])
 
 
 app = QApplication(sys.argv)

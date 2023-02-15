@@ -13,6 +13,9 @@ PySide2 -> QtWidgets -> QWidget -> Visualizer
 3. ```getSearchList(query, max_length=10)```
    > searches the given query from the **pydb** library and returns *max_length* number of queries
 
+4. ```changeFile()```
+   > triggers FileDialog to get input filename
+
 
 ## PDBVisualizer Methods (PDBVisualizerSubWidget.py)
 Python2 -> QtWebEngineWidgets -> QWebEngineView -> PDBVisualizer
@@ -26,10 +29,7 @@ Python2 -> QtWebEngineWidgets -> QWebEngineView -> PDBVisualizer
 3. ```parseSystem()```
    > parses pdb file
 
-4. ```changeFile()```
-   > triggers FileDialog to get input filename
-
-5. ```showFile()```
+4. ```showFile()```
    > calls setupView()
 
 
