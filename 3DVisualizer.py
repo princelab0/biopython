@@ -1,51 +1,8 @@
 import sys
-from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QFileDialog
-from PySide2.QtWebEngineWidgets import QWebEngineView
+from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLineEdit, QComboBox
+from PDBVisualizerSubWidget import PDBVisualizer
 
-import py3Dmol
-
-class PDBVisualizer(QWebEngineView):
-    def __init__(self, width, height, pdbPath):
-        super().__init__()
-
-        self.width = width
-        self.height = height
-        self.setFixedSize(self.width+20, self.height+20)
-
-        self.pdbPath = pdbPath
-        self.fileName = ""
-
-        self.system = None
-
-        self.view = py3Dmol.view(width=self.width, height=self.height)
-
-    def setupView(self):
-        self.parseSystem()
-        self.view.clear()   # clear cache
-        self.view.addModelsAsFrames(self.system)
-        self.view.setStyle({'model': -1}, {"cartoon": {'color': 'spectrum'}})
-        self.view.zoomTo()
-        # from py3Dmol.view.show
-        self.view.updatejs = ''
-        self.setHtml(self.view._make_html())
-
-    def parseSystem(self):
-        with open(self.pdbPath) as ifile:
-            self.system = "".join([x for x in ifile])
-
-    def changeFile(self):
-        self.fileName = QFileDialog.getOpenFileName()[0]
-        print(self.fileName)
-
-    def showFile(self):
-        print(self.fileName, self.pdbPath)
-        if not self.fileName: return
-        self.pdbPath = self.fileName
-        print(self.fileName, self.pdbPath)
-
-        self.setupView()
-
-
+import pypdb.clients.pdb.pdb_client
 
 class Visualizer(QWidget):
     def __init__(self):
@@ -53,23 +10,75 @@ class Visualizer(QWidget):
         self.container = QHBoxLayout()
         self.buttonsContainer = QVBoxLayout()
 
-
-        self.pdbVisualizer = PDBVisualizer(500, 500, "")
+        # --------------------- Widget definitions --------------------------#
+        self.pdbVisualizer= PDBVisualizer(500, 500)
+        self.searchBar    = QLineEdit()
         self.selectButton = QPushButton(text="Select")
         self.showButton   = QPushButton(text="Show")
+        self.downloadButton = QPushButton(text="download")
+        self.comboBox     = QComboBox()
+        # -------------------------------------------------------------------#
+        self.comboBox.addItem("Search...")
+        self.searchBar.setPlaceholderText("Search")
+        # self.comboBox.setEditable(True)
 
+        # --------------------- EVENT LISTENERS ------------------------------#
+        # self.comboBox.activated.connect(self.downloadPDB)
+        self.searchBar.returnPressed.connect(self.updateComboBox)
+        self.searchBar.returnPressed.connect(self.comboBox.showPopup)
         self.selectButton.clicked.connect(self.pdbVisualizer.changeFile)
+        self.downloadButton.clicked.connect(lambda: self.downloadPDB())
         self.showButton.clicked.connect(self.pdbVisualizer.showFile)
+        # --------------------------------------------------------------------#
 
+        # left container
         self.container.addWidget(self.pdbVisualizer)
 
+        # right container
+        self.buttonsContainer.addWidget(self.searchBar)
+        self.buttonsContainer.addWidget(self.comboBox)
+        self.buttonsContainer.addWidget(self.downloadButton)
         self.buttonsContainer.addWidget(self.selectButton)
         self.buttonsContainer.addWidget(self.showButton)
-        self.buttonsContainer.addStretch(1)
+        self.buttonsContainer.addStretch(1)  # padding-bottom: max;
 
+        # right container
         self.container.addLayout(self.buttonsContainer)
 
         self.setLayout(self.container)
+
+    
+    def updateComboBox(self):
+        # query = self.searchBar.currentText()
+        query = self.searchBar.text()
+        if not query:
+            self.comboBox.hide()
+            return
+
+        self.comboBox.clear()
+
+        for i in (temp:=self.getSearchList(query)):
+            self.comboBox.addItem(i)
+
+        self.comboBox.show()
+
+    def downloadPDB(self, name="temp"):
+        pdb_id = self.comboBox.currentText()
+        try:
+            pdb_file = pypdb.clients.pdb.pdb_client.get_pdb_file(pdb_id)
+        except:
+            return
+
+        with open(name+".pdb", "w") as f:
+            f.write(pdb_file)
+
+        self.fileName = name+".pdb"
+        
+            
+    def getSearchList(self, query, max_length=10):
+        temp = pypdb.Query(query).search()
+        if len(temp) >= 10: return temp[:max_length]
+        return temp
 
 
 app = QApplication(sys.argv)
