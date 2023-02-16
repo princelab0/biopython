@@ -1,6 +1,8 @@
 from PySide2.QtWebEngineWidgets import QWebEngineView
+from PySide2.QtCore import QUrl
 
 import py3Dmol
+import os
 
 
 
@@ -22,14 +24,20 @@ class PDBVisualizer(QWebEngineView):
     def setupView(self):
         self.parseSystem()
         self.view.clear()   # clear cache
-        self.view = py3Dmol.view(width=self.width, height=self.height)
+        # self.view = py3Dmol.view(width=self.width, height=self.height)
 
         self.view.addModelsAsFrames(self.system)
         self.view.setStyle({'model': -1}, {"cartoon": {'color': 'spectrum'}})
         self.view.zoomTo()
         # from py3Dmol.view.show
         self.view.updatejs = ''
-        self.setHtml(self.view._make_html())
+        temp = self.view._make_html()
+        # saving html to a file
+        with open("temp.html", "w") as file:
+            file.write(temp)
+        path =(os.path.dirname(os.path.realpath(__file__)) + "\\temp.html").replace("\\","/")
+        # loading the saved html
+        self.load(path)
 
     def parseSystem(self):
         with open(self.pdbPath) as ifile:

@@ -8,6 +8,7 @@ __pycache__/
 
 # temp files
 temp.pdb
+temp.html
 
 # Distribution / packaging
 .Python
