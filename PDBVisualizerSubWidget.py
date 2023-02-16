@@ -1,5 +1,4 @@
 from PySide2.QtWebEngineWidgets import QWebEngineView
-from PySide2.QtCore import QUrl
 
 import py3Dmol
 import os

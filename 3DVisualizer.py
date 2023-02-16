@@ -1,14 +1,17 @@
 import sys
 from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLineEdit, QComboBox
 from PDBVisualizerSubWidget import PDBVisualizer
-from PySide2.QtWidgets import QFileDialog
+from PySide2.QtWidgets import QFileDialog, QProgressBar
 
+from pdbDownloader import PDBDownloader
 
 import pypdb.clients.pdb.pdb_client
 
 class Visualizer(QWidget):
     def __init__(self):
         super().__init__()
+        self.downloader = PDBDownloader()
+
         self.container = QHBoxLayout()
         self.buttonsContainer = QVBoxLayout()
 
@@ -16,6 +19,7 @@ class Visualizer(QWidget):
         self.pdbVisualizer= PDBVisualizer(500, 500)
         self.searchBar    = QLineEdit()
         self.selectButton = QPushButton(text="Select")
+        self.downloadProgressBar = QProgressBar() 
         self.showButton   = QPushButton(text="Show")
         self.downloadButton = QPushButton(text="download")
         self.comboBox     = QComboBox()
@@ -23,6 +27,8 @@ class Visualizer(QWidget):
         self.comboBox.addItem("Search...")
         self.searchBar.setPlaceholderText("Search")
         # self.comboBox.setEditable(True)
+
+        self.downloadProgressBar.setValue(0)
 
         # --------------------- EVENT LISTENERS ------------------------------#
         # self.comboBox.activated.connect(self.downloadPDB)
@@ -40,6 +46,7 @@ class Visualizer(QWidget):
         self.buttonsContainer.addWidget(self.searchBar)
         self.buttonsContainer.addWidget(self.comboBox)
         self.buttonsContainer.addWidget(self.downloadButton)
+        self.buttonsContainer.addWidget(self.downloadProgressBar)
         self.buttonsContainer.addWidget(self.selectButton)
         self.buttonsContainer.addWidget(self.showButton)
         self.buttonsContainer.addStretch(1)  # padding-bottom: max;
@@ -67,13 +74,8 @@ class Visualizer(QWidget):
 
     def downloadPDB(self, name="temp"):
         pdb_id = self.comboBox.currentText()
-        try:
-            pdb_file = pypdb.clients.pdb.pdb_client.get_pdb_file(pdb_id)
-        except:
-            return
 
-        with open(name+".pdb", "w") as f:
-            f.write(pdb_file)
+        self.downloader.download(pdb_id, self.downloadProgressBar.setValue)
 
         self.pdbVisualizer.fileName = name+".pdb"
         self.selectedButtonText(pdb_id)
