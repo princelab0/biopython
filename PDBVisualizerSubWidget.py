@@ -17,6 +17,7 @@ class PDBVisualizer(QWebEngineView):
         self.fileName = ""
 
         self.system = None
+        self.setting = {}
 
         self.view = py3Dmol.view(width=self.width, height=self.height)
 
@@ -26,7 +27,7 @@ class PDBVisualizer(QWebEngineView):
         # self.view = py3Dmol.view(width=self.width, height=self.height)
 
         self.view.addModelsAsFrames(self.system)
-        self.view.setStyle({'model': -1}, {"cartoon": {'color': 'spectrum'}})
+        self.view.setStyle({'model': -1}, {self.setting["style"]: {'color': self.setting["color"]}})
         self.view.zoomTo()
         # from py3Dmol.view.show
         self.view.updatejs = ''
@@ -48,3 +49,5 @@ class PDBVisualizer(QWebEngineView):
 
         self.setupView()
 
+    def changeSetting(self, setting):
+        self.setting = setting

@@ -4,6 +4,7 @@ from PDBVisualizerSubWidget import PDBVisualizer
 from PySide2.QtWidgets import QFileDialog, QProgressBar
 
 from pdbDownloader import PDBDownloader
+from editorSettings import EditorSetting
 
 import pypdb.clients.pdb.pdb_client
 
@@ -36,7 +37,7 @@ class Visualizer(QWidget):
         self.searchBar.returnPressed.connect(self.comboBox.showPopup)
         self.selectButton.clicked.connect(self.changeFile)
         self.downloadButton.clicked.connect(lambda: self.downloadPDB())
-        self.showButton.clicked.connect(self.pdbVisualizer.showFile)
+        self.showButton.clicked.connect(self.showVisual)
         # --------------------------------------------------------------------#
 
         # left container
@@ -52,10 +53,20 @@ class Visualizer(QWidget):
         self.buttonsContainer.addStretch(1)  # padding-bottom: max;
 
         # right container
-        self.container.addLayout(self.buttonsContainer)
+        self.rightWrapper = QVBoxLayout()
+
+        self.editor = EditorSetting()
+        # self.container.addWidget(self.editor)
+        self.rightWrapper.addLayout(self.buttonsContainer)
+        self.rightWrapper.addWidget(self.editor)
+
+        self.container.addLayout(self.rightWrapper)
 
         self.setLayout(self.container)
-
+    
+    def showVisual(self):
+        self.pdbVisualizer.changeSetting(self.editor.getSettings())
+        self.pdbVisualizer.showFile()
     
     def updateComboBox(self):
         # query = self.searchBar.currentText()
@@ -66,7 +77,7 @@ class Visualizer(QWidget):
 
         self.comboBox.clear()
 
-        for i in (temp:=self.getSearchList(query)):
+        for i in self.getSearchList(query):
             self.comboBox.addItem(i)
 
         self.comboBox.show()
