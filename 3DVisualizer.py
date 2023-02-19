@@ -1,8 +1,8 @@
 import sys
 from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLineEdit, QComboBox
-from PDBVisualizerSubWidget import PDBVisualizer
 from PySide2.QtWidgets import QFileDialog, QProgressBar
 
+from PDBVisualizerSubWidget import PDBVisualizer
 from pdbDownloader import PDBDownloader
 from editorSettings import EditorSetting
 
@@ -13,26 +13,28 @@ class Visualizer(QWidget):
         super().__init__()
         self.downloader = PDBDownloader()
 
-        self.container = QHBoxLayout()
-        self.buttonsContainer = QVBoxLayout()
+        self.container        = QHBoxLayout()              # main container
+        self.rightWrapper     = QVBoxLayout()              # right container
+        self.buttonsContainer = QVBoxLayout()              # right-top container
+        self.editor           = EditorSetting()            # right-bottom container
+
 
         # --------------------- Widget definitions --------------------------#
-        self.pdbVisualizer= PDBVisualizer(500, 500)
-        self.searchBar    = QLineEdit()
-        self.selectButton = QPushButton(text="Select")
-        self.downloadProgressBar = QProgressBar() 
-        self.showButton   = QPushButton(text="Show")
-        self.downloadButton = QPushButton(text="download")
-        self.comboBox     = QComboBox()
+        self.pdbVisualizer      = PDBVisualizer(500, 500)
+        self.searchBar          = QLineEdit()
+        self.selectButton       = QPushButton(text="Select")
+        self.downloadProgressBar= QProgressBar() 
+        self.showButton         = QPushButton(text="Show")
+        self.downloadButton     = QPushButton(text="download")
+        self.comboBox           = QComboBox()
         # -------------------------------------------------------------------#
         self.comboBox.addItem("Search...")
         self.searchBar.setPlaceholderText("Search")
-        # self.comboBox.setEditable(True)
+
 
         self.downloadProgressBar.setValue(0)
 
         # --------------------- EVENT LISTENERS ------------------------------#
-        # self.comboBox.activated.connect(self.downloadPDB)
         self.searchBar.returnPressed.connect(self.updateComboBox)
         self.searchBar.returnPressed.connect(self.comboBox.showPopup)
         self.selectButton.clicked.connect(self.changeFile)
@@ -41,9 +43,8 @@ class Visualizer(QWidget):
         # --------------------------------------------------------------------#
 
         # left container
-        self.container.addWidget(self.pdbVisualizer)
 
-        # right container
+        # right-top container
         self.buttonsContainer.addWidget(self.searchBar)
         self.buttonsContainer.addWidget(self.comboBox)
         self.buttonsContainer.addWidget(self.downloadButton)
@@ -52,24 +53,27 @@ class Visualizer(QWidget):
         self.buttonsContainer.addWidget(self.showButton)
         self.buttonsContainer.addStretch(1)  # padding-bottom: max;
 
-        # right container
-        self.rightWrapper = QVBoxLayout()
+        # right wrapper
+        self.rightWrapper.addLayout(self.buttonsContainer)   # right-top
+        self.rightWrapper.addWidget(self.editor)             # right-bottom
 
-        self.editor = EditorSetting()
-        # self.container.addWidget(self.editor)
-        self.rightWrapper.addLayout(self.buttonsContainer)
-        self.rightWrapper.addWidget(self.editor)
-
+        # left and right containers
+        self.container.addWidget(self.pdbVisualizer)
         self.container.addLayout(self.rightWrapper)
 
+        # adding main container
         self.setLayout(self.container)
     
+
+
+
+    # change setting and render the file
     def showVisual(self):
         self.pdbVisualizer.changeSetting(self.editor.getSettings())
         self.pdbVisualizer.showFile()
     
+    # show search result id in combobox
     def updateComboBox(self):
-        # query = self.searchBar.currentText()
         query = self.searchBar.text()
         if not query:
             self.comboBox.hide()
@@ -82,7 +86,7 @@ class Visualizer(QWidget):
 
         self.comboBox.show()
 
-
+    # downloads PDB
     def downloadPDB(self, name="temp"):
         pdb_id = self.comboBox.currentText()
 
@@ -91,29 +95,32 @@ class Visualizer(QWidget):
         self.pdbVisualizer.fileName = name+".pdb"
         self.selectedButtonText(pdb_id)
         
-            
+    # search and returns list of ids
     def getSearchList(self, query, max_length=10):
         temp = pypdb.Query(query).search()
         if len(temp) >= 10: return temp[:max_length]
         return temp
     
+    # changes text of select button to mark selected file
     def selectedButtonText(self, name):
         if not name: return
         self.selectButton.setText(name)
     
+    # open file name dialogue
     def changeFile(self):
         self.pdbVisualizer.fileName = QFileDialog.getOpenFileName()[0]
         self.selectedButtonText(self.pdbVisualizer.fileName.split(".")[0].split('/')[-1])
 
 
-app = QApplication(sys.argv)
+if __name__=="__main__":
+    app = QApplication(sys.argv)
 
-window = QMainWindow()
-window.setGeometry(100, 100, 700, 500)
+    window = QMainWindow()
+    window.setGeometry(100, 100, 700, 500)
 
-pdbWidget = Visualizer()
-window.setCentralWidget(pdbWidget)
+    pdbWidget = Visualizer()
+    window.setCentralWidget(pdbWidget)
 
-window.show()
+    window.show()
 
-app.exec_()
+    app.exec_()

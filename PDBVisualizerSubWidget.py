@@ -21,33 +21,39 @@ class PDBVisualizer(QWebEngineView):
 
         self.view = py3Dmol.view(width=self.width, height=self.height)
 
+    # clears cache of view, sets styles, saves into temp.html, loads it
     def setupView(self):
         self.parseSystem()
         self.view.clear()   # clear cache
-        # self.view = py3Dmol.view(width=self.width, height=self.height)
 
         self.view.addModelsAsFrames(self.system)
-        self.view.setStyle({'model': -1}, {self.setting["style"]: {'color': self.setting["color"]}})
+        self.view.setStyle({'model': -1}, {self.setting["style"]: {'color': self.setting["color"], 'colorscheme': self.setting["colorscheme"]}})
         self.view.zoomTo()
+
         # from py3Dmol.view.show
         self.view.updatejs = ''
         temp = self.view._make_html()
+        
         # saving html to a file
         with open("temp.html", "w") as file:
             file.write(temp)
         path =(os.path.dirname(os.path.realpath(__file__)) + "\\temp.html").replace("\\","/")
+        
         # loading the saved html
         self.load(path)
 
+    # reads the pdb file
     def parseSystem(self):
         with open(self.pdbPath) as ifile:
             self.system = "".join([x for x in ifile])
 
+    # calls setupView function if file is selected
     def showFile(self):
         if not self.fileName: return
         self.pdbPath = self.fileName
 
         self.setupView()
 
+    # changes the setting
     def changeSetting(self, setting):
         self.setting = setting
