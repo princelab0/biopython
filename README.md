@@ -31,6 +31,3 @@ Python2 -> QtWebEngineWidgets -> QWebEngineView -> PDBVisualizer
 
 4. ```showFile()```
    > calls setupView()
-
-
-> **Note**: there are a lot of files which doesn't render from py3Dmol

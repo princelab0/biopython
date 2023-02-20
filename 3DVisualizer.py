@@ -17,17 +17,18 @@ class Visualizer(QWidget):
         self.rightWrapper     = QVBoxLayout()              # right container
         self.buttonsContainer = QVBoxLayout()              # right-top container
         self.editor           = EditorSetting()            # right-bottom container
-
+        self.editor.setShowFunction(self.showVisual)
 
         # --------------------- Widget definitions --------------------------#
         self.pdbVisualizer      = PDBVisualizer(500, 500)
         self.searchBar          = QLineEdit()
         self.selectButton       = QPushButton(text="Select")
         self.downloadProgressBar= QProgressBar() 
-        self.showButton         = QPushButton(text="Show")
+        # self.showButton         = QPushButton(text="Show")
         self.downloadButton     = QPushButton(text="download")
         self.comboBox           = QComboBox()
         # -------------------------------------------------------------------#
+
         self.comboBox.addItem("Search...")
         self.searchBar.setPlaceholderText("Search")
 
@@ -39,7 +40,7 @@ class Visualizer(QWidget):
         self.searchBar.returnPressed.connect(self.comboBox.showPopup)
         self.selectButton.clicked.connect(self.changeFile)
         self.downloadButton.clicked.connect(lambda: self.downloadPDB())
-        self.showButton.clicked.connect(self.showVisual)
+        # self.showButton.clicked.connect(self.showVisual)
         # --------------------------------------------------------------------#
 
         # left container
@@ -50,7 +51,7 @@ class Visualizer(QWidget):
         self.buttonsContainer.addWidget(self.downloadButton)
         self.buttonsContainer.addWidget(self.downloadProgressBar)
         self.buttonsContainer.addWidget(self.selectButton)
-        self.buttonsContainer.addWidget(self.showButton)
+        # self.buttonsContainer.addWidget(self.showButton)
         self.buttonsContainer.addStretch(1)  # padding-bottom: max;
 
         # right wrapper
@@ -63,6 +64,9 @@ class Visualizer(QWidget):
 
         # adding main container
         self.setLayout(self.container)
+
+        # setting 
+        self.editor.colorSchemeChanged(0)
     
 
 
@@ -94,6 +98,7 @@ class Visualizer(QWidget):
 
         self.pdbVisualizer.fileName = name+".pdb"
         self.selectedButtonText(pdb_id)
+        self.showVisual()
         
     # search and returns list of ids
     def getSearchList(self, query, max_length=10):
@@ -110,6 +115,7 @@ class Visualizer(QWidget):
     def changeFile(self):
         self.pdbVisualizer.fileName = QFileDialog.getOpenFileName()[0]
         self.selectedButtonText(self.pdbVisualizer.fileName.split(".")[0].split('/')[-1])
+        self.showVisual()
 
 
 if __name__=="__main__":
