@@ -4,7 +4,7 @@ class PDBDownloader:
     def __init__(self):
         self.base_url = "https://files.rcsb.org/download/"
 
-    def download(self, id, callback=lambda progress:0, fileName="temp.pdb"):
+    def download(self, id, callback=lambda progress:0, fileName="temp.pdb", directory=""):
         url = f"{self.base_url}/{id}.pdb"
 
         response = requests.get(url, stream=True)
@@ -13,7 +13,7 @@ class PDBDownloader:
             return
         
         try:
-            with open(fileName, "wb") as file:
+            with open(directory+fileName, "wb") as file:
                 total_length = response.headers.get('content-length')
 
                 if total_length is None: # no content length header

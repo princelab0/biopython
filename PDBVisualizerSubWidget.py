@@ -22,7 +22,7 @@ class PDBVisualizer(QWebEngineView):
         self.view = py3Dmol.view(width=self.width, height=self.height)
 
     # clears cache of view, sets styles, saves into temp.html, loads it
-    def setupView(self):
+    def setupView(self, directory=""):
         self.parseSystem()
         self.view.clear()   # clear cache
 
@@ -35,10 +35,10 @@ class PDBVisualizer(QWebEngineView):
         temp = self.view._make_html()
         
         # saving html to a file
-        with open("temp.html", "w") as file:
+        with open(directory + "temp.html", "w") as file:
             file.write(temp)
-        path =(os.path.dirname(os.path.realpath(__file__)) + "\\temp.html").replace("\\","/")
-        
+        # load function takes absolute path
+        path =(os.path.dirname(os.path.realpath(__file__)) + '/' + directory + "temp.html").replace("\\","/")
         # loading the saved html
         self.load(path)
 
@@ -48,11 +48,11 @@ class PDBVisualizer(QWebEngineView):
             self.system = "".join([x for x in ifile])
 
     # calls setupView function if file is selected
-    def showFile(self):
+    def showFile(self, directory=""):
         if not self.fileName: return
         self.pdbPath = self.fileName
 
-        self.setupView()
+        self.setupView(directory)
 
     # changes the setting
     def changeSetting(self, setting):

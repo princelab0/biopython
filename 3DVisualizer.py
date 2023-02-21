@@ -6,10 +6,18 @@ from PDBVisualizerSubWidget import PDBVisualizer
 from pdbDownloader import PDBDownloader
 from editorSettings import EditorSetting
 
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.figure import Figure
+
 import pypdb.clients.pdb.pdb_client
+
+TEMP = 10
 
 class Visualizer(QWidget):
     def __init__(self):
+
+        self.SAVE_FILE_LOCATION = "tempFiles/"
+
         super().__init__()
         self.downloader = PDBDownloader()
 
@@ -74,7 +82,7 @@ class Visualizer(QWidget):
     # change setting and render the file
     def showVisual(self):
         self.pdbVisualizer.changeSetting(self.editor.getSettings())
-        self.pdbVisualizer.showFile()
+        self.pdbVisualizer.showFile(directory=self.SAVE_FILE_LOCATION)
     
     # show search result id in combobox
     def updateComboBox(self):
@@ -93,10 +101,10 @@ class Visualizer(QWidget):
     # downloads PDB
     def downloadPDB(self, name="temp"):
         pdb_id = self.comboBox.currentText()
+        self.pdbVisualizer.fileName = self.SAVE_FILE_LOCATION + name+".pdb"
 
-        self.downloader.download(pdb_id, self.downloadProgressBar.setValue)
+        self.downloader.download(pdb_id, self.downloadProgressBar.setValue, directory=self.SAVE_FILE_LOCATION)
 
-        self.pdbVisualizer.fileName = name+".pdb"
         self.selectedButtonText(pdb_id)
         self.showVisual()
         
