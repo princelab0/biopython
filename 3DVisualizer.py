@@ -6,12 +6,8 @@ from PDBVisualizerSubWidget import PDBVisualizer
 from pdbDownloader import PDBDownloader
 from editorSettings import EditorSetting
 
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
-from matplotlib.figure import Figure
-
 import pypdb.clients.pdb.pdb_client
 
-TEMP = 10
 
 class Visualizer(QWidget):
     def __init__(self):
