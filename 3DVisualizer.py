@@ -4,7 +4,7 @@ from PySide2.QtWidgets import QFileDialog, QProgressBar
 
 from PDBVisualizerSubWidget import PDBVisualizer
 from pdbDownloader import PDBDownloader
-from editorSettings import EditorSetting
+from settingWidget.editorSettings import EditorSetting
 
 import pypdb.clients.pdb.pdb_client
 

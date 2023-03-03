@@ -15,8 +15,50 @@ class Main(QMainWindow):
             strip_sources=True
         )      
         
-        code = "import nglview\nview=nglview.demo()\nview"
+        code = """import nglview
+view=nglview.demo()
+view.layout.width = "500px"
+view.layout.height = "500px"
+view.layout.resizable = False
+view"""
+#         code = """
+# import matplotlib.pyplot as plt
 
+# # Data for x-axis
+# x = [1, 2, 3, 4, 5]
+
+# # Data for y-axis
+# y = [1, 4, 9, 16, 25]
+
+# # Create a figure and axis
+# fig, ax = plt.subplots()
+
+# # Plot the data
+# ax.plot(x, y)
+
+# # Set the labels for the x and y axis
+# ax.set_xlabel('X-axis')
+# ax.set_ylabel('Y-axis')
+
+# # Set the title of the plot
+# ax.set_title('Simple Line Graph')
+
+# # Show the plot
+# plt.show()
+# """
+#         code = """
+# import py3Dmol
+
+# with open("./example-pdb/structure.pdb") as ifile:
+#     system = "".join([x for x in ifile])
+
+# view = py3Dmol.view(width=400, height=300)
+# view.addModelsAsFrames(system)
+# view.setStyle({'model': -1}, {"line": {'color': 'chain', "colorscheme": "greenCarbon"}})
+# view.zoomTo()
+# view.show()
+
+# """
         self.voila_widget.add_notebook_cell(code=code, cell_type='code')
 
         self.setCentralWidget(self.voila_widget)

@@ -22,6 +22,7 @@ class QtVoila(QWebEngineView):
     def __init__(self, parent=None, temp_dir=None,
                  external_notebook=None, strip_sources=True):
         super().__init__()
+        self.setFixedSize(500, 500)
         self.parent = parent
         # Temporary folder path
         if temp_dir is None:
@@ -72,7 +73,7 @@ class QtVoila(QWebEngineView):
         return nbf.write(self.internal_notebook,filename)
 
     def run_voila(self):
-        self.save_notebook_as(r'c:\temp\zz.ipynb')
+        # self.save_notebook_as(r'c:\temp\zz.ipynb')
         """Set up notebook and run it with a dedicated Voila thread."""
         # Stop any current Voila thread
         self.close_renderer()
@@ -116,6 +117,7 @@ class VoilaThread(QtCore.QThread):
             self.get_free_port()
         else:
             self.port = port
+        print(self.port)
 
     def run(self):
         self.voila_process = psutil.Popen([sys.executable,"-m","voila" , "--no-browser", "--port" , str(self.port)
@@ -124,7 +126,7 @@ class VoilaThread(QtCore.QThread):
         while True:
 
             print('Waiting for voila to start up...')
-            time.sleep(1)
+            # time.sleep(1)
 
             try:
                 result = urlopen('http://localhost:{0}'.format(self.port))

@@ -4,15 +4,14 @@ class EditorSetting(QWidget):
     def __init__(self):
         super().__init__()
         self._layout = QVBoxLayout()
-        self.color = "#fff"     # default color is black
+        self.color = "#fff"
 
         self.showFunction = None
 
         # combo init
-        self.styleBox = ComboBox("style", ["cartoon", "stick", "line"])
-        # self.colorBox = ComboBox("color", ["spectrum", "black", "red", "green", "blue", "#aabb00"])
+        self.styleBox = ComboBox("style", ["cartoon", "ball+stick", "contact", "helixorient","hyperball", "licorice", "line", "point", "ribbon", "rocket", "rope", "spacefill", "surface", "trace", "tube", "unitcell"])
         self.colorBox = QPushButton("color")
-        self.colorScheme = ComboBox("colorscheme", ["None", "chain", "ssPyMol", "ssJmol", "greenCarbon"])
+        self.colorScheme = ComboBox("colorscheme", ["none", "atomindex","bfactor", "chainid", "chainindex", "chainname", "densityfit", "electrostatic", "element", "entityindex", "entitytype", "geoquality", "hydrophobicity", "modelindex", "moleculetype", "occupancy", "random", "residueindex", "resname", "sstruc", "uniform", "value", "volume"])
 
         # event handlers
         self.colorBox.clicked.connect(self.getColor)
