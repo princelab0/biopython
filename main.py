@@ -1,11 +1,14 @@
 import sys
 from PySide2.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QPushButton
 
-from qtvoila import QtVoila
 from visualizer_template_generator.generator import ViewGenerator
 
 from settingWidget.editorSettings import EditorSetting
 from settingWidget.fileSettings   import FileSettings
+
+import backend
+from backend.Viewer import Viewer
+
 
 class Main(QWidget):
     def __init__(self):
@@ -15,14 +18,11 @@ class Main(QWidget):
         self.editorSetting = EditorSetting()
         self.fileSetting = FileSettings()
 
-        self.visualizer = QtVoila(
-            parent=None,
-            temp_dir="./tempFiles",
-            external_notebook=None,
-            strip_sources=True
-        )
-
-        self.visualizer.add_notebook_cell(code=self.generator.getCode(), cell_type='code')
+        # Viewer Widget
+        self.visualizer = Viewer(backend.PORT)
+        self.tempButton = QPushButton("click")
+        # initialize
+        backend.nbWriter.addCode(self.generator.getCode())
 
         # main wrapper
         self.layoutManager = QHBoxLayout()
@@ -41,18 +41,21 @@ class Main(QWidget):
         # event listeners
         self.editorSetting.setShowFunction(self.actionListenerFromEditor)
         self.setLayout(self.layoutManager)
-
-        self.visualizer.run_voila()
+        # self.setLayout(self.leftWrapper)
+        backend.voilaRunner.start()
+        self.visualizer.loadUrl()
 
         
 
     def update(self):
-        self.visualizer.clear()
-        self.visualizer.add_notebook_cell(code=self.generator.getCode(), cell_type='code')
-        self.visualizer.run_voila()
+        backend.nbWriter.addCode(self.generator.getCode())
+        backend.voilaRunner.start()
+        self.visualizer.loadUrl()
+        # self.visualizer.clear()
+        # self.visualizer.add_notebook_cell(code=self.generator.getCode(), cell_type='code')
+        # self.visualizer.run_voila()
 
     def actionListenerFromEditor(self):
-        self.generator.changeColor(self.editorSetting.color)
         self.generator.changeSettings(self.editorSetting.getSettings())
         self.update()
 

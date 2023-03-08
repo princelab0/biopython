@@ -9,6 +9,11 @@
     ```pip install pypdb```
 5. qtvoila
     ```pip install qtvoila```
+6. voila 7.7.2
+7. runipy
+8. ipykernel
+9. IPython (6.5.0)
+10. resource
 
 > python 10.10
 > ipywidgets 7.7.2
