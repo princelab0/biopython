@@ -14,6 +14,12 @@ class VoilaRunner:
         self.processes = []
 
         self.processes.append(Popen(self.command.split()))
+
+    def killExistingProcesses(self):
+        if self.processes:
+            for i in self.processes:
+                i.kill()
+        self.processes = []
         
 
 

@@ -59,6 +59,8 @@ class Main(QWidget):
         self.generator.changeSettings(self.editorSetting.getSettings())
         self.update()
 
+def on_close():
+    pass
 
 if __name__=="__main__":
     app = QApplication(sys.argv)
@@ -71,4 +73,5 @@ if __name__=="__main__":
 
     window.show()
 
+    app.aboutToQuit.connect(backend.voilaRunner.killExistingProcesses)
     app.exec_()

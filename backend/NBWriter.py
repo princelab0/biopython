@@ -12,4 +12,4 @@ class NBWriter:
         self.save()
     
     def save(self):
-        nbf.write(self.nb, 'my_notebook.ipynb')
+        nbf.write(self.nb, self.path)
