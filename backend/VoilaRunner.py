@@ -4,7 +4,7 @@ class VoilaRunner:
     def __init__(self, nbPath, port):
         self.nbPath = nbPath
         self.port = port
-        self.command = f'voila {self.nbPath} --no-browser --port={self.port}'
+        self.command = f'voila {self.nbPath} --no-browser --port={self.port} --autoreload=True'
         self.processes = []
     
     def start(self):

@@ -8,7 +8,7 @@ from settingWidget.fileSettings   import FileSettings
 
 import backend
 from backend.Viewer import Viewer
-
+import time
 
 class Main(QWidget):
     def __init__(self):
@@ -22,6 +22,7 @@ class Main(QWidget):
         self.visualizer = Viewer(backend.PORT)
         self.tempButton = QPushButton("click")
         # initialize
+        self.generator.changeSettings(self.editorSetting.getSettings())
         backend.nbWriter.addCode(self.generator.getCode())
 
         # main wrapper
@@ -49,8 +50,8 @@ class Main(QWidget):
 
     def update(self):
         backend.nbWriter.addCode(self.generator.getCode())
-        backend.voilaRunner.start()
-        self.visualizer.loadUrl()
+        # backend.voilaRunner.start()
+        self.visualizer.reload()
         # self.visualizer.clear()
         # self.visualizer.add_notebook_cell(code=self.generator.getCode(), cell_type='code')
         # self.visualizer.run_voila()
