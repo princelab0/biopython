@@ -16,7 +16,7 @@ class Main(QWidget):
         # all components
         self.generator = ViewGenerator()
         self.editorSetting = EditorSetting()
-        self.fileSetting = FileSettings()
+        self.fileSetting = FileSettings("./tempFiles/temp.pdb")
 
         # Viewer Widget
         self.visualizer = Viewer(backend.PORT)
@@ -41,6 +41,7 @@ class Main(QWidget):
         self.layoutManager.addLayout(self.rightWrapper)
         # event listeners
         self.editorSetting.setShowFunction(self.actionListenerFromEditor)
+        self.fileSetting.setShowFunction(self.actionListenerFromFile)
         self.setLayout(self.layoutManager)
         # self.setLayout(self.leftWrapper)
         backend.voilaRunner.start()
@@ -58,6 +59,11 @@ class Main(QWidget):
 
     def actionListenerFromEditor(self):
         self.generator.changeSettings(self.editorSetting.getSettings())
+        self.update()
+
+    def actionListenerFromFile(self):
+        print(self.fileSetting.path)
+        self.generator.setPDB(self.fileSetting.path)
         self.update()
 
 def on_close():

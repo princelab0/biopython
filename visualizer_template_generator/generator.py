@@ -6,16 +6,25 @@ class ViewGenerator:
             "color" : "white",
             "colorscheme" : "chain"
         }
-        self.template = """import nglview
-view=nglview.demo()
-"""
+        self.template = """import nglview"""
 
 
     def getCode(self):
+        # return "print('hello world')"
+#         return """
+# """
         return self.getFinalCode()
     
+    def setPDB(self, pdb_path):
+        self.pdb_path = pdb_path
+
     def getFinalCode(self):
-        code = self.template + """       
+        code = self.template
+        if self.pdb_path:
+            code += f"\nview=nglview.show_structure_file('temp.pdb')\n"
+        else:
+            code += f"\nview=nglview.demo()"
+        code += """
 view.representations = [
     {'type': '""" + self.settings['style'] + """', 'params': {
         'sele': 'protein', 'color': '"""+ self.settings['color'] + """'
@@ -36,7 +45,9 @@ view"""
         self.settings["colorscheme"] = colorscheme
 
     def changeSettings(self, settings):
-        print("HELOW", settings['colorscheme'])
         if settings['colorscheme']!="none":
             settings['color'] = settings['colorscheme']
         self.settings = settings
+
+    def changePath(self, path):
+        self.path = path

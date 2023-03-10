@@ -4,10 +4,12 @@ from pdbDownloader import PDBDownloader
 import pypdb.clients.pdb.pdb_client
 
 class FileSettings(QWidget):
-    def __init__(self):
+    def __init__(self, path=""):
         super().__init__()
+        self.path = path
         self._layout = QVBoxLayout()
         self.color = "#fff"     # default color is black
+        self.showFunction = lambda : 0  # temp function
 
         
         self.downloader = PDBDownloader()
@@ -60,14 +62,14 @@ class FileSettings(QWidget):
 
 
     # downloads PDB
-    def downloadPDB(self, name="temp"):
+    def downloadPDB(self):
         pdb_id = self.comboBox.currentText()
-        self.pdbVisualizer.fileName = self.SAVE_FILE_LOCATION + name+".pdb"
+        # self.path = path
 
-        self.downloader.download(pdb_id, self.downloadProgressBar.setValue, directory=self.SAVE_FILE_LOCATION)
+        self.downloader.download(pdb_id, self.downloadProgressBar.setValue, directory=self.path)
 
         self.selectedButtonText(pdb_id)
-        self.showVisual()
+        self.showFunction()
         
     # search and returns list of ids
     def getSearchList(self, query, max_length=10):
@@ -82,6 +84,13 @@ class FileSettings(QWidget):
     
     # open file name dialogue
     def changeFile(self):
-        self.pdbVisualizer.fileName = QFileDialog.getOpenFileName()[0]
-        self.selectedButtonText(self.pdbVisualizer.fileName.split(".")[0].split('/')[-1])
-        self.showVisual()
+        self.temppath = QFileDialog.getOpenFileName()[0]
+
+        with open("./tempFiles/temp.pdb", "w") as fp:
+            fp.write(open(self.temppath, "r").read())
+
+        self.selectedButtonText(self.path.split(".")[0].split('/')[-1])
+        self.showFunction()
+
+    def setShowFunction(self, func):
+        self.showFunction = func
