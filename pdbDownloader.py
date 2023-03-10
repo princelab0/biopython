@@ -2,11 +2,16 @@ import requests
 
 class PDBDownloader:
     def __init__(self):
-        self.base_url = "https://files.rcsb.org/download/"
+        self.base_url = "https://files.rcsb.org/download"
 
-    def download(self, id, callback=lambda progress:0, fileName="temp.pdb", directory=""):
+    def download(self, id, callback=lambda progress:0, fileName="", directory="tempFiles/"):
         url = f"{self.base_url}/{id}.pdb"
 
+        print()
+        print("hello world! ", directory, fileName)
+        print(directory + fileName)
+        print(url)
+        print()
         response = requests.get(url, stream=True)
 
         if response.status_code!=200:

@@ -7,6 +7,15 @@
     ```pip install requests```
 4. pypdb
     ```pip install pypdb```
-
+5. qtvoila
+    ```pip install qtvoila```
+6. voila 7.7.2
+7. runipy
+8. ipykernel
+9. IPython (6.5.0)
+10. resource
+11. xeus-python
+12. watchdog
 
 > python 10.10
+> ipywidgets 7.7.2

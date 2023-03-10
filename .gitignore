@@ -9,6 +9,14 @@ __pycache__/
 # temp files
 temp.pdb
 temp.html
+temp.*
+temp_notebook.ipynb
+
+# old files
+3DVisualizer.py
+PDBVisualizerSubWidget.py
+QTVoilaSolution.py
+tempCodeRunnerFile.py
 
 # Distribution / packaging
 .Python
